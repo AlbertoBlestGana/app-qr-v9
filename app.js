@@ -22,11 +22,17 @@ async function prepararCamara(){
 
 try{
 
-const stream=await navigator.mediaDevices.getUserMedia({video:true})
+const stream=await navigator.mediaDevices.getUserMedia({
+video:true
+})
 
 stream.getTracks().forEach(track=>track.stop())
 
-}catch(e){}
+}catch(e){
+
+console.log("Permiso de cámara no concedido")
+
+}
 
 }
 
@@ -34,14 +40,23 @@ stream.getTracks().forEach(track=>track.stop())
 
 function guardarUsuario(){
 
-let nombreCompleto=document.getElementById("nombreCompleto").value.trim()
+let nombreCompleto=document
+.getElementById("nombreCompleto")
+.value
+.trim()
 
 if(!nombreCompleto){
+
 alert("Completa el nombre")
+
 return
+
 }
 
-localStorage.setItem("usuario",JSON.stringify({nombreCompleto}))
+localStorage.setItem(
+"usuario",
+JSON.stringify({nombreCompleto})
+)
 
 iniciarApp()
 
@@ -52,19 +67,31 @@ iniciarApp()
 async function siguienteEstudiante(){
 
 if(qr && scanning){
+
 await qr.stop()
+
 scanning=false
+
 }
 
 localStorage.removeItem("usuario")
 
 document.getElementById("app").style.display="none"
+
 document.getElementById("login").style.display="block"
 
 document.getElementById("nombreCompleto").value=""
+
 document.getElementById("resultado").innerText=""
 
+document.getElementById("btnEquipo").style.display="inline-block"
+
+document.getElementById("btnSiguiente").style.display="none"
+
 paso="equipo"
+
+equipo=""
+curso=""
 
 }
 
@@ -72,22 +99,28 @@ paso="equipo"
 
 function iniciarApp(){
 
-const user=JSON.parse(localStorage.getItem("usuario"))
+const user=JSON.parse(
+localStorage.getItem("usuario")
+)
 
 if(!user)return
 
 nombre=user.nombreCompleto
 
 document.getElementById("login").style.display="none"
+
 document.getElementById("app").style.display="block"
 
-document.getElementById("usuario").innerText="👤 "+nombre
+document.getElementById("usuario").innerText=
+"👤 "+nombre
+
+document.getElementById("btnEquipo").style.display=
+"inline-block"
+
+document.getElementById("btnSiguiente").style.display=
+"none"
 
 cargarHistorial()
-
-setTimeout(()=>{
-iniciarEscaneo()
-},50)
 
 }
 
@@ -97,19 +130,34 @@ async function iniciarEscaneo(){
 
 if(scanning)return
 
+if(!qr){
+
 qr=new Html5Qrcode("reader")
+
+}
 
 try{
 
 await qr.start(
+
 {facingMode:"environment"},
-{fps:12,qrbox:{width:250,height:250}},
+
+{
+fps:12,
+qrbox:{
+width:250,
+height:250
+}
+},
+
 onScan
+
 )
 
 }catch{
 
-const devices=await Html5Qrcode.getCameras()
+const devices=
+await Html5Qrcode.getCameras()
 
 let cam=devices[0].id
 
@@ -117,14 +165,35 @@ for(let d of devices){
 
 let label=d.label.toLowerCase()
 
-if(label.includes("back")||label.includes("rear")||label.includes("environment")){
+if(
+label.includes("back") ||
+label.includes("rear") ||
+label.includes("environment")
+){
+
 cam=d.id
+
 break
-}
 
 }
 
-await qr.start(cam,{fps:12,qrbox:{width:250,height:250}},onScan)
+}
+
+await qr.start(
+
+cam,
+
+{
+fps:12,
+qrbox:{
+width:250,
+height:250
+}
+},
+
+onScan
+
+)
 
 }
 
@@ -141,7 +210,6 @@ await qr.stop()
 scanning=false
 
 }
-
 /* SCAN */
 
 async function onScan(text){
@@ -158,15 +226,21 @@ if(paso==="equipo"){
 
 equipo=text
 
-document.getElementById("resultado").innerText="Equipo: "+equipo
+document.getElementById("resultado").innerText=
+"📦 Equipo: "+equipo
 
-document.getElementById("btnSiguiente").style.display="inline-block"
+document.getElementById("btnEquipo").style.display=
+"none"
+
+document.getElementById("btnSiguiente").style.display=
+"inline-block"
 
 }else{
 
 curso=text
 
-document.getElementById("resultado").innerText=`Equipo: ${equipo} | Curso: ${curso}`
+document.getElementById("resultado").innerText=
+`📦 Equipo: ${equipo} | 🎓 Curso: ${curso}`
 
 guardarRegistro()
 
@@ -175,62 +249,103 @@ paso="equipo"
 equipo=""
 curso=""
 
+document.getElementById("btnSiguiente").style.display=
+"none"
+
+document.getElementById("btnEquipo").style.display=
+"inline-block"
+
+document.getElementById("resultado").innerText=
+"✅ Registro guardado correctamente"
+
 }
 
-setTimeout(()=>cooldown=false,600)
+setTimeout(()=>{
+cooldown=false
+},600)
 
 }
 
-/* SIGUIENTE */
+/* SIGUIENTE PASO */
 
 function siguientePaso(){
 
 paso="curso"
 
-document.getElementById("resultado").innerText="Escanea el curso"
+document.getElementById("resultado").innerText=
+"🎓 Escanea el código QR del curso"
 
-document.getElementById("btnSiguiente").style.display="none"
+document.getElementById("btnSiguiente").style.display=
+"none"
 
-setTimeout(()=>iniciarEscaneo(),10)
+setTimeout(()=>{
+iniciarEscaneo()
+},100)
 
 }
 
-/* GUARDAR */
+/* GUARDAR REGISTRO */
 
 function guardarRegistro(){
 
-let registros=JSON.parse(localStorage.getItem("registros"))||[]
+let registros=
+JSON.parse(localStorage.getItem("registros")) || []
 
 registros.push({
-nombre,
-equipo,
-curso,
+
+nombre:nombre,
+
+equipo:equipo,
+
+curso:curso,
+
 fecha:new Date().toLocaleString()
+
 })
 
-localStorage.setItem("registros",JSON.stringify(registros))
+localStorage.setItem(
+"registros",
+JSON.stringify(registros)
+)
 
 cargarHistorial()
 
 }
-
 /* HISTORIAL */
 
 function cargarHistorial(){
 
-let registros=JSON.parse(localStorage.getItem("registros"))||[]
+let registros=
+JSON.parse(localStorage.getItem("registros")) || []
 
-let ultimos=registros.slice(-10).reverse()
+let propios=
+registros.filter(r=>r.nombre===nombre)
+
+let ultimos=
+propios.slice(-10).reverse()
 
 let html=""
 
 ultimos.forEach(r=>{
-html+=`<div>${r.nombre} | 📦 ${r.equipo} | 🎓 ${r.curso}</div>`
+
+html+=`
+<div>
+${r.nombre}
+|
+📦 ${r.equipo}
+|
+🎓 ${r.curso}
+|
+🕒 ${r.fecha}
+</div>
+`
+
 })
 
 document.getElementById("historial").innerHTML=html
 
-document.getElementById("contador").innerText="Escaneados: "+registros.length
+document.getElementById("contador").innerText=
+"Escaneados: "+propios.length
 
 }
 
@@ -238,55 +353,129 @@ document.getElementById("contador").innerText="Escaneados: "+registros.length
 
 function deshacer(){
 
-let registros=JSON.parse(localStorage.getItem("registros"))||[]
+let registros=
+JSON.parse(localStorage.getItem("registros")) || []
 
 if(!registros.length){
+
 alert("Nada que deshacer")
+
 return
+
 }
 
 registros.pop()
 
-localStorage.setItem("registros",JSON.stringify(registros))
+localStorage.setItem(
+"registros",
+JSON.stringify(registros)
+)
 
 cargarHistorial()
 
 }
 
-/* EXCEL */
+/* EXPORTAR EXCEL */
 
 function exportarExcel(){
 
-let registros=JSON.parse(localStorage.getItem("registros"))||[]
+let registros=
+JSON.parse(localStorage.getItem("registros")) || []
 
 if(!registros.length){
+
 alert("No hay registros")
+
 return
+
 }
 
 let datos=registros.map(r=>({
+
 Nombre:r.nombre,
+
 Equipo:r.equipo,
+
 Curso:r.curso,
+
 Fecha:r.fecha
+
 }))
 
-let ws=XLSX.utils.json_to_sheet(datos)
+let ws=
+XLSX.utils.json_to_sheet(datos)
 
 ws["!cols"]=[
+
+{wch:30},
+
 {wch:20},
-{wch:15},
-{wch:18},
-{wch:22}
+
+{wch:20},
+
+{wch:25}
+
 ]
 
-let wb=XLSX.utils.book_new()
+let wb=
+XLSX.utils.book_new()
 
-XLSX.utils.book_append_sheet(wb,ws,"Registro")
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+"Registro"
+)
 
-let fecha=new Date().toISOString().replace(/[:.]/g,"-")
+let fecha=new Date()
 
-XLSX.writeFile(wb,"registro-"+fecha+".xlsx")
+let nombreArchivo=
+
+`Registro_${
+fecha.getFullYear()
+}-${
+String(fecha.getMonth()+1)
+.padStart(2,"0")
+}-${
+String(fecha.getDate())
+.padStart(2,"0")
+}.xlsx`
+
+XLSX.writeFile(
+wb,
+nombreArchivo
+)
+
+}
+
+/* NUEVA PLANILLA */
+
+function nuevaPlanilla(){
+
+if(
+!confirm(
+"¿Deseas eliminar todos los registros y comenzar una nueva planilla?"
+)
+){
+return
+}
+
+localStorage.removeItem("registros")
+
+paso="equipo"
+
+equipo=""
+curso=""
+
+document.getElementById("resultado").innerText=
+"🗑 Nueva planilla creada"
+
+document.getElementById("btnEquipo").style.display=
+"inline-block"
+
+document.getElementById("btnSiguiente").style.display=
+"none"
+
+cargarHistorial()
 
 }
 
@@ -294,15 +483,30 @@ XLSX.writeFile(wb,"registro-"+fecha+".xlsx")
 
 function finalizarRegistro(){
 
-if(!confirm("Exportar Excel y limpiar registro?"))return
+if(
+!confirm(
+"¿Exportar Excel y limpiar registros?"
+)
+){
+return
+}
 
 exportarExcel()
 
 localStorage.removeItem("registros")
 
+paso="equipo"
+
+equipo=""
+curso=""
+
 document.getElementById("resultado").innerText=""
 
-paso="equipo"
+document.getElementById("btnEquipo").style.display=
+"inline-block"
+
+document.getElementById("btnSiguiente").style.display=
+"none"
 
 cargarHistorial()
 
@@ -314,8 +518,12 @@ window.onload=()=>{
 
 prepararCamara()
 
-if(localStorage.getItem("usuario")){
+if(
+localStorage.getItem("usuario")
+){
+
 iniciarApp()
+
 }
 
 }
