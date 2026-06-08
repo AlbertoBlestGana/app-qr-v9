@@ -13,24 +13,33 @@ const beep=new Audio("https://www.soundjay.com/buttons/beep-07.wav")
 /* SERVICE WORKER */
 
 if("serviceWorker" in navigator){
-navigator.serviceWorker.register("service-worker.js")
+
+navigator.serviceWorker.register(
+"service-worker.js"
+)
+
 }
 
-/* PEDIR PERMISO DE CAMARA SOLO UNA VEZ */
+/* PERMISO CAMARA */
 
 async function prepararCamara(){
 
 try{
 
-const stream=await navigator.mediaDevices.getUserMedia({
+const stream=
+await navigator.mediaDevices.getUserMedia({
 video:true
 })
 
-stream.getTracks().forEach(track=>track.stop())
+stream.getTracks().forEach(track=>{
+track.stop()
+})
 
 }catch(e){
 
-console.log("Permiso de cámara no concedido")
+console.log(
+"Permiso de cámara no concedido"
+)
 
 }
 
@@ -40,7 +49,9 @@ console.log("Permiso de cámara no concedido")
 
 function guardarUsuario(){
 
-let nombreCompleto=document
+let nombreCompleto=
+
+document
 .getElementById("nombreCompleto")
 .value
 .trim()
@@ -54,15 +65,20 @@ return
 }
 
 localStorage.setItem(
+
 "usuario",
-JSON.stringify({nombreCompleto})
+
+JSON.stringify({
+nombreCompleto
+})
+
 )
 
 iniciarApp()
 
 }
 
-/* SIGUIENTE ESTUDIANTE */
+/* CAMBIAR ESTUDIANTE */
 
 async function siguienteEstudiante(){
 
@@ -76,17 +92,23 @@ scanning=false
 
 localStorage.removeItem("usuario")
 
-document.getElementById("app").style.display="none"
+document.getElementById("app")
+.style.display="none"
 
-document.getElementById("login").style.display="block"
+document.getElementById("login")
+.style.display="block"
 
-document.getElementById("nombreCompleto").value=""
+document.getElementById("nombreCompleto")
+.value=""
 
-document.getElementById("resultado").innerText=""
+document.getElementById("resultado")
+.innerText=""
 
-document.getElementById("btnEquipo").style.display="inline-block"
+document.getElementById("btnEquipo")
+.style.display="inline-block"
 
-document.getElementById("btnSiguiente").style.display="none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
 paso="equipo"
 
@@ -95,11 +117,13 @@ curso=""
 
 }
 
-/* APP */
+/* INICIAR APP */
 
 function iniciarApp(){
 
-const user=JSON.parse(
+const user=
+
+JSON.parse(
 localStorage.getItem("usuario")
 )
 
@@ -107,18 +131,20 @@ if(!user)return
 
 nombre=user.nombreCompleto
 
-document.getElementById("login").style.display="none"
+document.getElementById("login")
+.style.display="none"
 
-document.getElementById("app").style.display="block"
+document.getElementById("app")
+.style.display="block"
 
-document.getElementById("usuario").innerText=
-"👤 "+nombre
+document.getElementById("usuario")
+.innerText="👤 "+nombre
 
-document.getElementById("btnEquipo").style.display=
-"inline-block"
+document.getElementById("btnEquipo")
+.style.display="inline-block"
 
-document.getElementById("btnSiguiente").style.display=
-"none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
 cargarHistorial()
 
@@ -144,10 +170,12 @@ await qr.start(
 
 {
 fps:12,
+
 qrbox:{
 width:250,
 height:250
 }
+
 },
 
 onScan
@@ -163,12 +191,17 @@ let cam=devices[0].id
 
 for(let d of devices){
 
-let label=d.label.toLowerCase()
+let label=
+d.label.toLowerCase()
 
 if(
+
 label.includes("back") ||
+
 label.includes("rear") ||
+
 label.includes("environment")
+
 ){
 
 cam=d.id
@@ -185,10 +218,12 @@ cam,
 
 {
 fps:12,
+
 qrbox:{
 width:250,
 height:250
 }
+
 },
 
 onScan
@@ -229,11 +264,11 @@ equipo=text
 document.getElementById("resultado").innerText=
 "📦 Equipo: "+equipo
 
-document.getElementById("btnEquipo").style.display=
-"none"
+document.getElementById("btnEquipo")
+.style.display="none"
 
-document.getElementById("btnSiguiente").style.display=
-"inline-block"
+document.getElementById("btnSiguiente")
+.style.display="inline-block"
 
 }else{
 
@@ -249,19 +284,21 @@ paso="equipo"
 equipo=""
 curso=""
 
-document.getElementById("btnSiguiente").style.display=
-"none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
-document.getElementById("btnEquipo").style.display=
-"inline-block"
+document.getElementById("btnEquipo")
+.style.display="inline-block"
 
-document.getElementById("resultado").innerText=
-"✅ Registro guardado correctamente"
+document.getElementById("resultado")
+.innerText="✅ Registro guardado"
 
 }
 
 setTimeout(()=>{
+
 cooldown=false
+
 },600)
 
 }
@@ -272,14 +309,17 @@ function siguientePaso(){
 
 paso="curso"
 
-document.getElementById("resultado").innerText=
+document.getElementById("resultado")
+.innerText=
 "🎓 Escanea el código QR del curso"
 
-document.getElementById("btnSiguiente").style.display=
-"none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
 setTimeout(()=>{
+
 iniciarEscaneo()
+
 },100)
 
 }
@@ -289,7 +329,10 @@ iniciarEscaneo()
 function guardarRegistro(){
 
 let registros=
-JSON.parse(localStorage.getItem("registros")) || []
+
+JSON.parse(
+localStorage.getItem("registros")
+) || []
 
 registros.push({
 
@@ -304,57 +347,135 @@ fecha:new Date().toLocaleString()
 })
 
 localStorage.setItem(
+
 "registros",
+
 JSON.stringify(registros)
+
 )
 
 cargarHistorial()
 
 }
+
 /* HISTORIAL */
 
 function cargarHistorial(){
 
 let registros=
-JSON.parse(localStorage.getItem("registros")) || []
+
+JSON.parse(
+localStorage.getItem("registros")
+) || []
 
 let propios=
-registros.filter(r=>r.nombre===nombre)
+
+registros.filter(
+r=>r.nombre===nombre
+)
 
 let ultimos=
-propios.slice(-10).reverse()
+propios.slice().reverse()
 
 let html=""
 
 ultimos.forEach(r=>{
 
 html+=`
-<div>
-${r.nombre}
-|
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:6px;
+margin:4px 0;
+border-bottom:1px solid #ddd;
+">
+
+<span>
+
 📦 ${r.equipo}
-|
-🎓 ${r.curso}
-|
-🕒 ${r.fecha}
+ |
+ 🎓 ${r.curso}
+ |
+ 🕒 ${r.fecha}
+
+</span>
+
+<button
+
+onclick="eliminarRegistro('${r.fecha}')"
+
+style="
+background:#dc3545;
+padding:6px 10px;
+font-size:14px;
+margin:0;
+"
+
+>
+
+🗑
+
+</button>
+
 </div>
+
 `
 
 })
 
-document.getElementById("historial").innerHTML=html
+document.getElementById("historial")
+.innerHTML=html
 
-document.getElementById("contador").innerText=
+document.getElementById("contador")
+.innerText=
 "Escaneados: "+propios.length
 
 }
 
-/* DESHACER */
+/* ELIMINAR REGISTRO */
+
+function eliminarRegistro(fecha){
+
+if(
+!confirm("¿Eliminar este registro?")
+){
+return
+}
+
+let registros=
+
+JSON.parse(
+localStorage.getItem("registros")
+) || []
+
+registros=
+
+registros.filter(
+r=>r.fecha!==fecha
+)
+
+localStorage.setItem(
+
+"registros",
+
+JSON.stringify(registros)
+
+)
+
+cargarHistorial()
+
+}
+/* DESHACER ULTIMO */
 
 function deshacer(){
 
 let registros=
-JSON.parse(localStorage.getItem("registros")) || []
+
+JSON.parse(
+localStorage.getItem("registros")
+) || []
 
 if(!registros.length){
 
@@ -367,8 +488,11 @@ return
 registros.pop()
 
 localStorage.setItem(
+
 "registros",
+
 JSON.stringify(registros)
+
 )
 
 cargarHistorial()
@@ -380,7 +504,10 @@ cargarHistorial()
 function exportarExcel(){
 
 let registros=
-JSON.parse(localStorage.getItem("registros")) || []
+
+JSON.parse(
+localStorage.getItem("registros")
+) || []
 
 if(!registros.length){
 
@@ -390,7 +517,9 @@ return
 
 }
 
-let datos=registros.map(r=>({
+let datos=
+
+registros.map(r=>({
 
 Nombre:r.nombre,
 
@@ -403,6 +532,7 @@ Fecha:r.fecha
 }))
 
 let ws=
+
 XLSX.utils.json_to_sheet(datos)
 
 ws["!cols"]=[
@@ -418,15 +548,21 @@ ws["!cols"]=[
 ]
 
 let wb=
+
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
+
 wb,
+
 ws,
+
 "Registro"
+
 )
 
-let fecha=new Date()
+let fecha=
+new Date()
 
 let nombreArchivo=
 
@@ -441,8 +577,11 @@ String(fecha.getDate())
 }.xlsx`
 
 XLSX.writeFile(
+
 wb,
+
 nombreArchivo
+
 )
 
 }
@@ -452,11 +591,15 @@ nombreArchivo
 function nuevaPlanilla(){
 
 if(
+
 !confirm(
 "¿Deseas eliminar todos los registros y comenzar una nueva planilla?"
 )
+
 ){
+
 return
+
 }
 
 localStorage.removeItem("registros")
@@ -466,14 +609,15 @@ paso="equipo"
 equipo=""
 curso=""
 
-document.getElementById("resultado").innerText=
+document.getElementById("resultado")
+.innerText=
 "🗑 Nueva planilla creada"
 
-document.getElementById("btnEquipo").style.display=
-"inline-block"
+document.getElementById("btnEquipo")
+.style.display="inline-block"
 
-document.getElementById("btnSiguiente").style.display=
-"none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
 cargarHistorial()
 
@@ -484,11 +628,15 @@ cargarHistorial()
 function finalizarRegistro(){
 
 if(
+
 !confirm(
 "¿Exportar Excel y limpiar registros?"
 )
+
 ){
+
 return
+
 }
 
 exportarExcel()
@@ -500,13 +648,14 @@ paso="equipo"
 equipo=""
 curso=""
 
-document.getElementById("resultado").innerText=""
+document.getElementById("resultado")
+.innerText=""
 
-document.getElementById("btnEquipo").style.display=
-"inline-block"
+document.getElementById("btnEquipo")
+.style.display="inline-block"
 
-document.getElementById("btnSiguiente").style.display=
-"none"
+document.getElementById("btnSiguiente")
+.style.display="none"
 
 cargarHistorial()
 
@@ -519,7 +668,9 @@ window.onload=()=>{
 prepararCamara()
 
 if(
+
 localStorage.getItem("usuario")
+
 ){
 
 iniciarApp()
