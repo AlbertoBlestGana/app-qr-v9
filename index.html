@@ -12,7 +12,7 @@
 <style>
 
 body{
-font-family:Arial;
+font-family:Arial,sans-serif;
 text-align:center;
 margin:10px;
 background:#f5f5f5;
@@ -40,7 +40,7 @@ border:1px solid #ccc;
 
 button{
 padding:12px 18px;
-margin:10px;
+margin:8px;
 font-size:16px;
 cursor:pointer;
 border:none;
@@ -63,11 +63,12 @@ margin:auto;
 }
 
 #historial{
-max-height:200px;
+max-height:250px;
 overflow-y:auto;
 border:1px solid #ccc;
-padding:5px;
+padding:10px;
 background:white;
+border-radius:6px;
 }
 
 #contador{
@@ -79,6 +80,10 @@ margin:10px;
 #btnSiguiente{
 display:none;
 background:#2c7be5;
+}
+
+#btnEquipo{
+background:#198754;
 }
 
 .logo{
@@ -101,9 +106,16 @@ margin-right:auto;
 
 <h4>Estudiante</h4>
 
-<input id="nombreCompleto" placeholder="Nombre y Apellido"><br>
+<input
+id="nombreCompleto"
+placeholder="Nombre y Apellido"
+>
 
-<button onclick="guardarUsuario()">Continuar</button>
+<br>
+
+<button onclick="guardarUsuario()">
+Continuar
+</button>
 
 <img src="logo.png" class="logo">
 
@@ -113,19 +125,42 @@ margin-right:auto;
 
 <h3 id="usuario"></h3>
 
-<div id="contador">Escaneados: 0</div>
+<div id="contador">
+Escaneados: 0
+</div>
 
-<button onclick="siguienteEstudiante()">➡ Siguiente estudiante</button>
-<button onclick="deshacer()">↩ Deshacer último</button>
-<button onclick="finalizarRegistro()">📊 Exportar Excel</button>
+<button onclick="siguienteEstudiante()">
+➡ Siguiente estudiante
+</button>
+
+<button onclick="deshacer()">
+↩ Deshacer último
+</button>
+
+<button onclick="finalizarRegistro()">
+📊 Exportar Excel
+</button>
+
+<button onclick="nuevaPlanilla()">
+🗑 Nueva planilla
+</button>
 
 <h2>Escaneo</h2>
+
+<button id="btnEquipo" onclick="iniciarEscaneo()">
+📦 Escanear equipo
+</button>
 
 <div id="reader"></div>
 
 <p id="resultado"></p>
 
-<button id="btnSiguiente" onclick="siguientePaso()">➡ Escanear curso</button>
+<button
+id="btnSiguiente"
+onclick="siguientePaso()"
+>
+🎓 Escanear curso
+</button>
 
 <h2>Historial</h2>
 
