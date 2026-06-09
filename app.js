@@ -197,9 +197,7 @@ d.label.toLowerCase()
 if(
 
 label.includes("back") ||
-
 label.includes("rear") ||
-
 label.includes("environment")
 
 ){
@@ -337,28 +335,22 @@ localStorage.getItem("registros")
 registros.push({
 
 nombre:nombre,
-
 equipo:equipo,
-
 curso:curso,
-
 fecha:new Date().toLocaleString()
 
 })
 
 localStorage.setItem(
-
 "registros",
-
 JSON.stringify(registros)
-
 )
 
 cargarHistorial()
 
 }
 
-/* HISTORIAL */
+/* HISTORIAL GLOBAL */
 
 function cargarHistorial(){
 
@@ -368,18 +360,12 @@ JSON.parse(
 localStorage.getItem("registros")
 ) || []
 
-let propios=
-
-registros.filter(
-r=>r.nombre===nombre
-)
-
-let ultimos=
-propios.slice().reverse()
-
 let html=""
 
-ultimos.forEach(r=>{
+registros
+.slice()
+.reverse()
+.forEach(r=>{
 
 html+=`
 
@@ -394,7 +380,9 @@ border-bottom:1px solid #ddd;
 
 <span>
 
-📦 ${r.equipo}
+👤 ${r.nombre}
+ |
+ 📦 ${r.equipo}
  |
  🎓 ${r.curso}
  |
@@ -430,7 +418,7 @@ document.getElementById("historial")
 
 document.getElementById("contador")
 .innerText=
-"Escaneados: "+propios.length
+"Escaneados: "+registros.length
 
 }
 
@@ -451,17 +439,13 @@ localStorage.getItem("registros")
 ) || []
 
 registros=
-
 registros.filter(
 r=>r.fecha!==fecha
 )
 
 localStorage.setItem(
-
 "registros",
-
 JSON.stringify(registros)
-
 )
 
 cargarHistorial()
@@ -488,11 +472,8 @@ return
 registros.pop()
 
 localStorage.setItem(
-
 "registros",
-
 JSON.stringify(registros)
-
 )
 
 cargarHistorial()
@@ -522,43 +503,31 @@ let datos=
 registros.map(r=>({
 
 Nombre:r.nombre,
-
 Equipo:r.equipo,
-
 Curso:r.curso,
-
 Fecha:r.fecha
 
 }))
 
 let ws=
-
 XLSX.utils.json_to_sheet(datos)
 
 ws["!cols"]=[
 
 {wch:30},
-
 {wch:20},
-
 {wch:20},
-
 {wch:25}
 
 ]
 
 let wb=
-
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
-
 wb,
-
 ws,
-
 "Registro"
-
 )
 
 let fecha=
@@ -569,19 +538,14 @@ let nombreArchivo=
 `Registro_${
 fecha.getFullYear()
 }-${
-String(fecha.getMonth()+1)
-.padStart(2,"0")
+String(fecha.getMonth()+1).padStart(2,"0")
 }-${
-String(fecha.getDate())
-.padStart(2,"0")
+String(fecha.getDate()).padStart(2,"0")
 }.xlsx`
 
 XLSX.writeFile(
-
 wb,
-
 nombreArchivo
-
 )
 
 }
@@ -591,15 +555,11 @@ nombreArchivo
 function nuevaPlanilla(){
 
 if(
-
 !confirm(
 "¿Deseas eliminar todos los registros y comenzar una nueva planilla?"
 )
-
 ){
-
 return
-
 }
 
 localStorage.removeItem("registros")
@@ -628,15 +588,11 @@ cargarHistorial()
 function finalizarRegistro(){
 
 if(
-
 !confirm(
 "¿Exportar Excel y limpiar registros?"
 )
-
 ){
-
 return
-
 }
 
 exportarExcel()
@@ -668,13 +624,9 @@ window.onload=()=>{
 prepararCamara()
 
 if(
-
 localStorage.getItem("usuario")
-
 ){
-
 iniciarApp()
-
 }
 
 }
