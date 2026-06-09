@@ -1,4 +1,4 @@
-const CACHE="qr-registro-v5"
+const CACHE="qr-registro-v7"
 
 const ASSETS=[
 "./",
