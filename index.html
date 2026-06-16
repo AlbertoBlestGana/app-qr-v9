@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
 
-<title>Registro QR</title>
-
 <meta name="viewport"
 content="width=device-width,initial-scale=1">
+
+<title>Registro QR</title>
 
 <link rel="manifest"
 href="manifest.json">
@@ -28,8 +29,6 @@ display:flex;
 
 justify-content:center;
 
-align-items:flex-start;
-
 min-height:100vh;
 
 }
@@ -38,7 +37,7 @@ min-height:100vh;
 
 width:100%;
 
-max-width:450px;
+max-width:500px;
 
 background:white;
 
@@ -53,23 +52,27 @@ text-align:center;
 
 }
 
-h1{
+.logo{
 
-font-size:32px;
+width:220px;
 
-color:#0f6c6d;
+max-width:90%;
 
-margin-bottom:25px;
+display:block;
+
+margin:auto;
+
+margin-bottom:15px;
 
 }
 
-h4{
+h1{
 
-font-size:18px;
+font-size:28px;
 
-color:#555;
+color:#0f6c6d;
 
-margin-bottom:10px;
+margin-bottom:20px;
 
 }
 
@@ -81,70 +84,59 @@ box-sizing:border-box;
 
 padding:14px;
 
-font-size:18px;
+font-size:16px;
 
 border-radius:12px;
 
 border:1px solid #ccc;
 
-margin-bottom:15px;
+margin-bottom:10px;
 
 }
 
 button{
 
-padding:14px 22px;
+width:100%;
 
-font-size:17px;
+padding:14px;
 
 border:none;
 
 border-radius:12px;
 
-background:#0f6c6d;
-
-color:white;
+font-size:16px;
 
 cursor:pointer;
 
-margin:5px;
+color:white;
+
+margin-top:8px;
 
 }
 
-button:hover{
+.btn-verde{
+background:#198754;
+}
 
-opacity:.9;
+.btn-azul{
+background:#2c7be5;
+}
 
+.btn-principal{
+background:#0f6c6d;
+}
+
+.btn-rojo{
+background:#dc3545;
 }
 
 #app{
-
 display:none;
-
 }
 
 #reader{
-
 width:300px;
-
 margin:auto;
-
-}
-
-#historial{
-
-max-height:250px;
-
-overflow-y:auto;
-
-border:1px solid #ddd;
-
-padding:10px;
-
-border-radius:12px;
-
-background:#fafafa;
-
 }
 
 #contador{
@@ -157,43 +149,35 @@ margin:15px;
 
 }
 
-#btnEquipo{
+#historial{
 
-background:#198754;
+max-height:300px;
 
-}
+overflow-y:auto;
 
-#btnSiguiente{
+border:1px solid #ddd;
 
-display:none;
+border-radius:12px;
 
-background:#2c7be5;
+padding:10px;
 
-}
+background:#fafafa;
 
-.logo-principal{
-
-width:220px;
-
-max-width:90%;
-
-margin:20px auto;
-
-display:block;
+margin-top:15px;
 
 }
 
 .firma{
 
-margin-top:30px;
+margin-top:25px;
 
 padding-top:15px;
 
-border-top:1px solid #e5e5e5;
-
-color:#666;
+border-top:1px solid #ddd;
 
 font-size:13px;
+
+color:#666;
 
 }
 
@@ -203,7 +187,7 @@ display:block;
 
 color:#0f6c6d;
 
-margin-bottom:6px;
+margin-bottom:5px;
 
 }
 
@@ -215,6 +199,10 @@ margin-bottom:6px;
 
 <div class="card">
 
+<img
+src="logo.png"
+class="logo">
+
 <h1>
 
 REGISTRO DE USO DE EQUIPOS
@@ -223,22 +211,52 @@ REGISTRO DE USO DE EQUIPOS
 
 <div id="login">
 
-<h4>Estudiante</h4>
+<h3>Profesor a cargo</h3>
+
+<input
+id="docente"
+placeholder="Nombre del docente">
+
+<button
+class="btn-azul"
+onclick="guardarDocente()">
+
+Guardar docente
+
+</button>
+
+<h3>Curso</h3>
+
+<p id="cursoActual">
+
+Sin curso seleccionado
+
+</p>
+
+<button
+id="btnCurso"
+class="btn-verde"
+onclick="escanearCurso()">
+
+🎓 Escanear curso
+
+</button>
+
+<hr>
+
+<h3>Estudiante</h3>
 
 <input
 id="nombreCompleto"
 placeholder="Nombre y Apellido">
 
 <button
+class="btn-principal"
 onclick="guardarUsuario()">
 
 Continuar
 
 </button>
-
-<img
-src="logo.png"
-class="logo-principal">
 
 </div>
 <div id="app">
@@ -251,51 +269,55 @@ Escaneados: 0
 
 </div>
 
-<button onclick="siguienteEstudiante()">
-
-➡ Siguiente estudiante
-
-</button>
-
-<button onclick="deshacer()">
-
-↩ Deshacer último
-
-</button>
-
-<button onclick="finalizarRegistro()">
-
-📊 Exportar Excel
-
-</button>
-
-<button onclick="nuevaPlanilla()">
-
-🗑 Nueva planilla
-
-</button>
-
-<h2>Escaneo</h2>
+<div style="display:flex;flex-direction:column;gap:8px;">
 
 <button
-id="btnEquipo"
+class="btn-verde"
 onclick="iniciarEscaneo()">
 
 📦 Escanear equipo
 
 </button>
 
+<button
+class="btn-azul"
+onclick="siguienteEstudiante()">
+
+➡ Siguiente estudiante
+
+</button>
+
+<button
+class="btn-principal"
+onclick="deshacer()">
+
+↩ Deshacer último
+
+</button>
+
+<button
+class="btn-principal"
+onclick="exportarExcel()">
+
+📊 Exportar Excel
+
+</button>
+
+<button
+class="btn-rojo"
+onclick="nuevaPlanilla()">
+
+🗑 Nueva planilla
+
+</button>
+
+</div>
+
+<br>
+
 <div id="reader"></div>
 
 <p id="resultado"></p>
-
-<button
-id="btnSiguiente"
-onclick="siguientePaso()">
-
-🎓 Escanear curso
-
-</button>
 
 <h2>Historial</h2>
 
@@ -304,21 +326,15 @@ onclick="siguientePaso()">
 <div class="firma">
 
 <strong>
-
 Sistema de Registro QR
-
 </strong>
 
 <div>
-
 Colegio Alberto Blest Gana
-
 </div>
 
 <div>
-
 © 2026 Bastian Sepúlveda
-
 </div>
 
 </div>
