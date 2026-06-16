@@ -1,6 +1,7 @@
-const CACHE="qr-registro-v10"
+const CACHE="qr-registro-v12"
 
 const ASSETS=[
+
 "./",
 "./index.html",
 "./app.js",
@@ -8,13 +9,15 @@ const ASSETS=[
 "./logo.png",
 "./icon-192.png",
 "./icon-512.png"
+
 ]
 
 self.addEventListener("install",e=>{
 
 e.waitUntil(
-caches.open(CACHE)
-.then(cache=>cache.addAll(ASSETS))
+caches.open(CACHE).then(cache=>{
+return cache.addAll(ASSETS)
+})
 )
 
 self.skipWaiting()
@@ -24,25 +27,15 @@ self.skipWaiting()
 self.addEventListener("activate",e=>{
 
 e.waitUntil(
-
 caches.keys().then(keys=>{
-
 return Promise.all(
-
 keys.map(key=>{
-
 if(key!==CACHE){
-
 return caches.delete(key)
-
 }
-
 })
-
 )
-
 })
-
 )
 
 self.clients.claim()
@@ -52,14 +45,9 @@ self.clients.claim()
 self.addEventListener("fetch",e=>{
 
 e.respondWith(
-
-caches.match(e.request)
-.then(response=>{
-
-return response || fetch(e.request)
-
+caches.match(e.request).then(res=>{
+return res || fetch(e.request)
 })
-
 )
 
 })
