@@ -115,22 +115,26 @@ background:#dc3545;
 #app{
 display:none;
 }
+<style>
 
 #reader{
 
-width:300px;
-height:auto;
+width:100%;
+max-width:320px;
+min-height:320px;
 
 margin:auto;
 margin-top:15px;
 
-border:2px solid #198754;
+border:3px solid #198754;
 
-border-radius:12px;
+border-radius:14px;
 
 overflow:hidden;
 
-background:white;
+background:#ffffff;
+
+display:block;
 
 }
 
@@ -161,6 +165,7 @@ font-size:14px;
 color:#666;
 text-align:center;
 margin-top:10px;
+font-weight:bold;
 
 }
 
@@ -323,9 +328,6 @@ onclick="nuevaPlanilla()">
 </p>
 
 <div id="reader"></div>
-<p style="text-align:center;color:#198754;font-weight:bold;">
-Apunte la cámara al código QR
-</p>
 
 <p
 style="
@@ -368,7 +370,7 @@ Colegio Alberto Blest Gana
 
 </div>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
