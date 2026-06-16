@@ -1,4 +1,4 @@
-const CACHE="qr-registro-v8"
+const CACHE="qr-registro-v10"
 
 const ASSETS=[
 "./",
@@ -24,6 +24,7 @@ self.skipWaiting()
 self.addEventListener("activate",e=>{
 
 e.waitUntil(
+
 caches.keys().then(keys=>{
 
 return Promise.all(
@@ -41,6 +42,7 @@ return caches.delete(key)
 )
 
 })
+
 )
 
 self.clients.claim()
