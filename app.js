@@ -1,14 +1,19 @@
+let docente=""
+let cursoGeneral=""
+
 let nombre=""
 let equipo=""
-let curso=""
-
-let paso="equipo"
 
 let qr=null
 let scanning=false
 let cooldown=false
 
-const beep=new Audio("https://www.soundjay.com/buttons/beep-07.wav")
+let modoEscaneo="equipo"
+
+const beep=
+new Audio(
+"https://www.soundjay.com/buttons/beep-07.wav"
+)
 
 /* SERVICE WORKER */
 
@@ -35,19 +40,77 @@ stream.getTracks().forEach(track=>{
 track.stop()
 })
 
-}catch(e){
+}catch(e){}
 
-console.log(
-"Permiso de cámara no concedido"
+}
+
+/* DOCENTE */
+
+function guardarDocente(){
+
+let valor=
+
+document
+.getElementById("docente")
+.value
+.trim()
+
+if(!valor){
+
+alert(
+"Ingrese el nombre del docente"
+)
+
+return
+
+}
+
+docente=valor
+
+localStorage.setItem(
+"docente",
+docente
+)
+
+alert(
+"Docente guardado"
 )
 
 }
 
+/* CURSO */
+
+function escanearCurso(){
+
+modoEscaneo="curso"
+
+iniciarEscaneo()
+
 }
 
-/* LOGIN */
+/* LOGIN ESTUDIANTE */
 
 function guardarUsuario(){
+
+if(!localStorage.getItem("docente")){
+
+alert(
+"Primero debe registrar al docente"
+)
+
+return
+
+}
+
+if(!localStorage.getItem("cursoGeneral")){
+
+alert(
+"Primero debe escanear el curso"
+)
+
+return
+
+}
 
 let nombreCompleto=
 
@@ -58,7 +121,9 @@ document
 
 if(!nombreCompleto){
 
-alert("Completa el nombre")
+alert(
+"Complete el nombre"
+)
 
 return
 
@@ -77,46 +142,6 @@ nombreCompleto
 iniciarApp()
 
 }
-
-/* CAMBIAR ESTUDIANTE */
-
-async function siguienteEstudiante(){
-
-if(qr && scanning){
-
-await qr.stop()
-
-scanning=false
-
-}
-
-localStorage.removeItem("usuario")
-
-document.getElementById("app")
-.style.display="none"
-
-document.getElementById("login")
-.style.display="block"
-
-document.getElementById("nombreCompleto")
-.value=""
-
-document.getElementById("resultado")
-.innerText=""
-
-document.getElementById("btnEquipo")
-.style.display="inline-block"
-
-document.getElementById("btnSiguiente")
-.style.display="none"
-
-paso="equipo"
-
-equipo=""
-curso=""
-
-}
-
 /* INICIAR APP */
 
 function iniciarApp(){
@@ -131,6 +156,12 @@ if(!user)return
 
 nombre=user.nombreCompleto
 
+cursoGeneral=
+localStorage.getItem("cursoGeneral") || ""
+
+docente=
+localStorage.getItem("docente") || ""
+
 document.getElementById("login")
 .style.display="none"
 
@@ -138,13 +169,10 @@ document.getElementById("app")
 .style.display="block"
 
 document.getElementById("usuario")
-.innerText="👤 "+nombre
+.innerText=
 
-document.getElementById("btnEquipo")
-.style.display="inline-block"
-
-document.getElementById("btnSiguiente")
-.style.display="none"
+`👤 ${nombre}
+ | 🎓 ${cursoGeneral}`
 
 cargarHistorial()
 
@@ -189,27 +217,6 @@ await Html5Qrcode.getCameras()
 
 let cam=devices[0].id
 
-for(let d of devices){
-
-let label=
-d.label.toLowerCase()
-
-if(
-
-label.includes("back") ||
-label.includes("rear") ||
-label.includes("environment")
-
-){
-
-cam=d.id
-
-break
-
-}
-
-}
-
 await qr.start(
 
 cam,
@@ -243,6 +250,7 @@ await qr.stop()
 scanning=false
 
 }
+
 /* SCAN */
 
 async function onScan(text){
@@ -255,41 +263,36 @@ beep.play()
 
 await detenerEscaneo()
 
-if(paso==="equipo"){
+if(modoEscaneo==="curso"){
 
-equipo=text
+cursoGeneral=text
 
-document.getElementById("resultado").innerText=
-"📦 Equipo: "+equipo
+localStorage.setItem(
+"cursoGeneral",
+cursoGeneral
+)
 
-document.getElementById("btnEquipo")
-.style.display="none"
+document.getElementById("cursoActual")
+.innerText=
 
-document.getElementById("btnSiguiente")
-.style.display="inline-block"
+"🎓 "+cursoGeneral
+
+document.getElementById("resultado")
+.innerText=
+
+"Curso registrado"
 
 }else{
 
-curso=text
-
-document.getElementById("resultado").innerText=
-`📦 Equipo: ${equipo} | 🎓 Curso: ${curso}`
+equipo=text
 
 guardarRegistro()
 
-paso="equipo"
-
-equipo=""
-curso=""
-
-document.getElementById("btnSiguiente")
-.style.display="none"
-
-document.getElementById("btnEquipo")
-.style.display="inline-block"
-
 document.getElementById("resultado")
-.innerText="✅ Registro guardado"
+.innerText=
+
+`✅ Equipo registrado:
+${equipo}`
 
 }
 
@@ -298,27 +301,6 @@ setTimeout(()=>{
 cooldown=false
 
 },600)
-
-}
-
-/* SIGUIENTE PASO */
-
-function siguientePaso(){
-
-paso="curso"
-
-document.getElementById("resultado")
-.innerText=
-"🎓 Escanea el código QR del curso"
-
-document.getElementById("btnSiguiente")
-.style.display="none"
-
-setTimeout(()=>{
-
-iniciarEscaneo()
-
-},100)
 
 }
 
@@ -334,23 +316,33 @@ localStorage.getItem("registros")
 
 registros.push({
 
+docente:docente,
+
 nombre:nombre,
+
 equipo:equipo,
-curso:curso,
-fecha:new Date().toLocaleString()
+
+curso:cursoGeneral,
+
+fecha:
+new Date()
+.toLocaleString()
 
 })
 
 localStorage.setItem(
+
 "registros",
+
 JSON.stringify(registros)
+
 )
 
 cargarHistorial()
 
 }
 
-/* HISTORIAL GLOBAL */
+/* HISTORIAL */
 
 function cargarHistorial(){
 
@@ -373,8 +365,7 @@ html+=`
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:6px;
-margin:4px 0;
+padding:8px;
 border-bottom:1px solid #ddd;
 ">
 
@@ -385,8 +376,6 @@ border-bottom:1px solid #ddd;
  📦 ${r.equipo}
  |
  🎓 ${r.curso}
- |
- 🕒 ${r.fecha}
 
 </span>
 
@@ -397,8 +386,7 @@ onclick="eliminarRegistro('${r.fecha}')"
 style="
 background:#dc3545;
 padding:6px 10px;
-font-size:14px;
-margin:0;
+width:auto;
 "
 
 >
@@ -418,10 +406,10 @@ document.getElementById("historial")
 
 document.getElementById("contador")
 .innerText=
+
 "Escaneados: "+registros.length
 
 }
-
 /* ELIMINAR REGISTRO */
 
 function eliminarRegistro(fecha){
@@ -451,7 +439,34 @@ JSON.stringify(registros)
 cargarHistorial()
 
 }
-/* DESHACER ULTIMO */
+
+/* SIGUIENTE ESTUDIANTE */
+
+function siguienteEstudiante(){
+
+localStorage.removeItem(
+"usuario"
+)
+
+document.getElementById(
+"nombreCompleto"
+).value=""
+
+document.getElementById(
+"resultado"
+).innerText=""
+
+document.getElementById(
+"app"
+).style.display="none"
+
+document.getElementById(
+"login"
+).style.display="block"
+
+}
+
+/* DESHACER */
 
 function deshacer(){
 
@@ -463,7 +478,9 @@ localStorage.getItem("registros")
 
 if(!registros.length){
 
-alert("Nada que deshacer")
+alert(
+"Nada que deshacer"
+)
 
 return
 
@@ -492,30 +509,56 @@ localStorage.getItem("registros")
 
 if(!registros.length){
 
-alert("No hay registros")
+alert(
+"No hay registros"
+)
 
 return
 
 }
 
-let datos=
+let datos=[]
 
-registros.map(r=>({
+datos.push({
+
+Nombre:"Profesor a cargo",
+Equipo:docente,
+Curso:"",
+Fecha:""
+
+})
+
+datos.push({
+
+Nombre:"",
+Equipo:"",
+Curso:"",
+Fecha:""
+
+})
+
+registros.forEach(r=>{
+
+datos.push({
 
 Nombre:r.nombre,
 Equipo:r.equipo,
 Curso:r.curso,
 Fecha:r.fecha
 
-}))
+})
+
+})
 
 let ws=
-XLSX.utils.json_to_sheet(datos)
+XLSX.utils.json_to_sheet(
+datos
+)
 
 ws["!cols"]=[
 
 {wch:30},
-{wch:20},
+{wch:25},
 {wch:20},
 {wch:25}
 
@@ -525,27 +568,31 @@ let wb=
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
+
 wb,
 ws,
 "Registro"
+
 )
 
 let fecha=
 new Date()
 
-let nombreArchivo=
+let archivo=
 
 `Registro_${
 fecha.getFullYear()
 }-${
-String(fecha.getMonth()+1).padStart(2,"0")
+String(fecha.getMonth()+1)
+.padStart(2,"0")
 }-${
-String(fecha.getDate()).padStart(2,"0")
+String(fecha.getDate())
+.padStart(2,"0")
 }.xlsx`
 
 XLSX.writeFile(
 wb,
-nombreArchivo
+archivo
 )
 
 }
@@ -556,62 +603,57 @@ function nuevaPlanilla(){
 
 if(
 !confirm(
-"¿Deseas eliminar todos los registros y comenzar una nueva planilla?"
+"¿Eliminar todos los registros, curso y docente?"
 )
 ){
 return
 }
 
-localStorage.removeItem("registros")
-
-paso="equipo"
-
-equipo=""
-curso=""
-
-document.getElementById("resultado")
-.innerText=
-"🗑 Nueva planilla creada"
-
-document.getElementById("btnEquipo")
-.style.display="inline-block"
-
-document.getElementById("btnSiguiente")
-.style.display="none"
-
-cargarHistorial()
-
-}
-
-/* FINALIZAR */
-
-function finalizarRegistro(){
-
-if(
-!confirm(
-"¿Exportar Excel y limpiar registros?"
+localStorage.removeItem(
+"registros"
 )
-){
-return
-}
 
-exportarExcel()
+localStorage.removeItem(
+"usuario"
+)
 
-localStorage.removeItem("registros")
+localStorage.removeItem(
+"cursoGeneral"
+)
 
-paso="equipo"
+localStorage.removeItem(
+"docente"
+)
 
+docente=""
+cursoGeneral=""
+nombre=""
 equipo=""
-curso=""
 
-document.getElementById("resultado")
-.innerText=""
+document.getElementById(
+"docente"
+).value=""
 
-document.getElementById("btnEquipo")
-.style.display="inline-block"
+document.getElementById(
+"nombreCompleto"
+).value=""
 
-document.getElementById("btnSiguiente")
-.style.display="none"
+document.getElementById(
+"cursoActual"
+).innerText=
+"Sin curso seleccionado"
+
+document.getElementById(
+"resultado"
+).innerText=""
+
+document.getElementById(
+"app"
+).style.display="none"
+
+document.getElementById(
+"login"
+).style.display="block"
 
 cargarHistorial()
 
@@ -623,10 +665,42 @@ window.onload=()=>{
 
 prepararCamara()
 
+docente=
+localStorage.getItem(
+"docente"
+) || ""
+
+cursoGeneral=
+localStorage.getItem(
+"cursoGeneral"
+) || ""
+
+if(docente){
+
+document.getElementById(
+"docente"
+).value=docente
+
+}
+
+if(cursoGeneral){
+
+document.getElementById(
+"cursoActual"
+).innerText=
+
+"🎓 "+cursoGeneral
+
+}
+
 if(
-localStorage.getItem("usuario")
+localStorage.getItem(
+"usuario"
+)
 ){
+
 iniciarApp()
+
 }
 
 }
