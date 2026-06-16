@@ -1,11 +1,10 @@
 {
   "name": "Registro QR",
-  "short_name": "RegistroQR",
+  "short_name": "QR",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f2f4f7",
+  "background_color": "#ffffff",
   "theme_color": "#0f6c6d",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
