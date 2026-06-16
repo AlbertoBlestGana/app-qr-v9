@@ -10,7 +10,7 @@ let cooldown=false
 
 let modoEscaneo="equipo"
 
-const beep=
+const beep =
 new Audio(
 "https://www.soundjay.com/buttons/beep-07.wav"
 )
@@ -31,7 +31,7 @@ async function prepararCamara(){
 
 try{
 
-const stream=
+const stream =
 await navigator.mediaDevices.getUserMedia({
 video:true
 })
@@ -40,7 +40,11 @@ stream.getTracks().forEach(track=>{
 track.stop()
 })
 
-}catch(e){}
+}catch(e){
+
+console.log(e)
+
+}
 
 }
 
@@ -48,7 +52,7 @@ track.stop()
 
 function guardarDocente(){
 
-let valor=
+let valor =
 
 document
 .getElementById("docente")
@@ -131,7 +135,7 @@ return
 
 }
 
-let nombreCompleto=
+let nombreCompleto =
 
 document
 .getElementById("nombreCompleto")
@@ -166,7 +170,7 @@ iniciarApp()
 
 function iniciarApp(){
 
-const user=
+const user =
 
 JSON.parse(
 localStorage.getItem("usuario")
@@ -210,7 +214,39 @@ document.getElementById(
 "estadoCamara"
 ).innerText="📷 Cámara activa"
 
+console.log("Botón presionado")
+
+console.log(
+"Html5Qrcode:",
+typeof Html5Qrcode
+)
+
+console.log(
+"Reader:",
+document.getElementById("reader")
+)
+
 try{
+
+if(typeof Html5Qrcode==="undefined"){
+
+alert(
+"Html5Qrcode no cargó"
+)
+
+return
+
+}
+
+if(!document.getElementById("reader")){
+
+alert(
+"No existe reader"
+)
+
+return
+
+}
 
 if(!qr){
 
@@ -240,15 +276,19 @@ scanning=true
 
 }catch(error){
 
-console.error(error)
+console.error(
+"ERROR CAMARA:",
+error
+)
+
+alert(
+"No fue posible abrir la cámara:\n"+
+error
+)
 
 document.getElementById(
 "estadoCamara"
 ).innerText="📷 Cámara cerrada"
-
-alert(
-"No fue posible abrir la cámara"
-)
 
 }
 
@@ -277,7 +317,6 @@ document.getElementById(
 ).innerText="📷 Cámara cerrada"
 
 }
-
 /* SCAN */
 
 async function onScan(text){
@@ -299,13 +338,15 @@ localStorage.setItem(
 cursoGeneral
 )
 
-document.getElementById("cursoActual")
-.innerText=
+document.getElementById(
+"cursoActual"
+).innerText=
 
 "🎓 "+cursoGeneral
 
-document.getElementById("resultado")
-.innerText=
+document.getElementById(
+"resultado"
+).innerText=
 
 "✅ Curso registrado"
 
@@ -315,8 +356,9 @@ equipo=text
 
 guardarRegistro()
 
-document.getElementById("resultado")
-.innerText=
+document.getElementById(
+"resultado"
+).innerText=
 
 `✅ Equipo registrado:
 ${equipo}`
@@ -330,11 +372,12 @@ cooldown=false
 },600)
 
 }
+
 /* GUARDAR REGISTRO */
 
 function guardarRegistro(){
 
-let registros=
+let registros =
 
 JSON.parse(
 localStorage.getItem("registros")
@@ -357,22 +400,18 @@ new Date()
 })
 
 localStorage.setItem(
-
 "registros",
-
 JSON.stringify(registros)
-
 )
 
 cargarHistorial()
 
 }
-
 /* HISTORIAL */
 
 function cargarHistorial(){
 
-let registros=
+let registros =
 
 JSON.parse(
 localStorage.getItem("registros")
@@ -427,17 +466,17 @@ width:auto;
 
 })
 
-document.getElementById("historial")
-.innerHTML=html
+document.getElementById(
+"historial"
+).innerHTML=html
 
-document.getElementById("contador")
-.innerText=
+document.getElementById(
+"contador"
+).innerText=
 
 "Escaneados: "+registros.length
 
 }
-
-/* ELIMINAR REGISTRO */
 
 function eliminarRegistro(fecha){
 
@@ -447,7 +486,7 @@ if(
 return
 }
 
-let registros=
+let registros =
 
 JSON.parse(
 localStorage.getItem("registros")
@@ -466,8 +505,6 @@ JSON.stringify(registros)
 cargarHistorial()
 
 }
-/* SIGUIENTE ESTUDIANTE */
-
 function siguienteEstudiante(){
 
 localStorage.removeItem(
@@ -492,22 +529,17 @@ document.getElementById(
 
 }
 
-/* DESHACER */
-
 function deshacer(){
 
 let registros=
 
 JSON.parse(
 localStorage.getItem("registros")
-) || []
+)||[]
 
 if(!registros.length){
 
-alert(
-"Nada que deshacer"
-)
-
+alert("Nada que deshacer")
 return
 
 }
@@ -523,33 +555,30 @@ cargarHistorial()
 
 }
 
-/* EXPORTAR EXCEL */
-
 function exportarExcel(){
 
-let registros =
+let registros=
 
 JSON.parse(
 localStorage.getItem("registros")
-) || []
+)||[]
 
 if(!registros.length){
 
 alert("No hay registros")
-
 return
 
 }
 
-let ws = XLSX.utils.aoa_to_sheet([
+let ws=XLSX.utils.aoa_to_sheet([
 
 ["COLEGIO ALBERTO BLEST GANA"],
 [],
 ["REGISTRO DE USO DE EQUIPOS"],
 [],
-["Profesor a cargo", docente],
-["Curso", cursoGeneral],
-["Fecha de exportación",
+["Profesor a cargo",docente],
+["Curso",cursoGeneral],
+["Fecha exportación",
 new Date().toLocaleString()],
 [],
 ["Nombre","Equipo","Curso","Fecha"]
@@ -569,38 +598,13 @@ r.curso,
 r.fecha
 ]],
 
-{
-origin:-1
-}
+{origin:-1}
 
 )
 
 })
 
-ws["!cols"]=[
-
-{wch:30},
-{wch:20},
-{wch:20},
-{wch:25}
-
-]
-
-ws["!merges"]=[
-
-{
-s:{r:0,c:0},
-e:{r:0,c:3}
-},
-
-{
-s:{r:2,c:0},
-e:{r:2,c:3}
-}
-
-]
-
-let wb =
+let wb=
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
@@ -609,35 +613,18 @@ ws,
 "Registro"
 )
 
-let fecha =
-new Date()
-
-let archivo =
-
-`Registro_${
-fecha.getFullYear()
-}-${
-String(fecha.getMonth()+1)
-.padStart(2,"0")
-}-${
-String(fecha.getDate())
-.padStart(2,"0")
-}.xlsx`
-
 XLSX.writeFile(
 wb,
-archivo
+"Registro.xlsx"
 )
 
 }
-
-/* NUEVA PLANILLA */
 
 function nuevaPlanilla(){
 
 if(
 !confirm(
-"¿Eliminar todos los registros, curso y docente?"
+"¿Eliminar todos los datos?"
 )
 ){
 return
@@ -649,8 +636,6 @@ location.reload()
 
 }
 
-/* AUTO LOGIN */
-
 window.onload=()=>{
 
 prepararCamara()
@@ -658,12 +643,12 @@ prepararCamara()
 docente=
 localStorage.getItem(
 "docente"
-) || ""
+)||""
 
 cursoGeneral=
 localStorage.getItem(
 "cursoGeneral"
-) || ""
+)||""
 
 if(docente){
 
