@@ -84,10 +84,29 @@ function escanearCurso(){
 
 modoEscaneo="curso"
 
+document.getElementById(
+"resultado"
+).innerText=
+"Escanea el código del curso"
+
 iniciarEscaneo()
 
 }
 
+/* EQUIPO */
+
+function escanearEquipo(){
+
+modoEscaneo="equipo"
+
+document.getElementById(
+"resultado"
+).innerText=
+"Escanea el código del equipo"
+
+iniciarEscaneo()
+
+}
 /* LOGIN ESTUDIANTE */
 
 function guardarUsuario(){
@@ -142,6 +161,7 @@ nombreCompleto
 iniciarApp()
 
 }
+
 /* INICIAR APP */
 
 function iniciarApp(){
@@ -171,24 +191,40 @@ document.getElementById("app")
 document.getElementById("usuario")
 .innerText=
 
-`👤 ${nombre}
- | 🎓 ${cursoGeneral}`
+`👤 ${nombre} | 🎓 ${cursoGeneral}`
 
 cargarHistorial()
 
 }
-
 /* ESCANEO */
 
 async function iniciarEscaneo(){
 
-if(scanning)return
+try{
 
-if(!qr){
+if(scanning){
 
-qr=new Html5Qrcode("reader")
+await detenerEscaneo()
 
 }
+
+}catch(e){}
+
+try{
+
+if(qr){
+
+await qr.clear()
+
+}
+
+}catch(e){}
+
+document.getElementById(
+"estadoCamara"
+).innerText="📷 Cámara activa"
+
+qr = new Html5Qrcode("reader")
 
 try{
 
@@ -198,37 +234,43 @@ await qr.start(
 
 {
 fps:12,
-
 qrbox:{
 width:250,
 height:250
 }
-
 },
 
 onScan
 
 )
 
-}catch{
+}catch(error){
 
-const devices=
+const devices =
 await Html5Qrcode.getCameras()
 
-let cam=devices[0].id
+if(!devices.length){
+
+alert("No se encontró cámara")
+
+document.getElementById(
+"estadoCamara"
+).innerText="📷 Cámara cerrada"
+
+return
+
+}
 
 await qr.start(
 
-cam,
+devices[0].id,
 
 {
 fps:12,
-
 qrbox:{
 width:250,
 height:250
 }
-
 },
 
 onScan
@@ -243,11 +285,23 @@ scanning=true
 
 async function detenerEscaneo(){
 
-if(!scanning)return
+try{
+
+if(qr){
 
 await qr.stop()
 
+await qr.clear()
+
+}
+
+}catch(e){}
+
 scanning=false
+
+document.getElementById(
+"estadoCamara"
+).innerText="📷 Cámara cerrada"
 
 }
 
@@ -280,7 +334,7 @@ document.getElementById("cursoActual")
 document.getElementById("resultado")
 .innerText=
 
-"Curso registrado"
+"✅ Curso registrado"
 
 }else{
 
@@ -303,7 +357,6 @@ cooldown=false
 },600)
 
 }
-
 /* GUARDAR REGISTRO */
 
 function guardarRegistro(){
@@ -410,6 +463,7 @@ document.getElementById("contador")
 "Escaneados: "+registros.length
 
 }
+
 /* ELIMINAR REGISTRO */
 
 function eliminarRegistro(fecha){
@@ -439,7 +493,6 @@ JSON.stringify(registros)
 cargarHistorial()
 
 }
-
 /* SIGUIENTE ESTUDIANTE */
 
 function siguienteEstudiante(){
@@ -515,32 +568,20 @@ return
 
 }
 
-/* ENCABEZADO */
-
 let ws = XLSX.utils.aoa_to_sheet([
 
 ["COLEGIO ALBERTO BLEST GANA"],
-
 [],
-
 ["REGISTRO DE USO DE EQUIPOS"],
-
 [],
-
 ["Profesor a cargo", docente],
-
 ["Curso", cursoGeneral],
-
 ["Fecha de exportación",
 new Date().toLocaleString()],
-
 [],
-
 ["Nombre","Equipo","Curso","Fecha"]
 
 ])
-
-/* REGISTROS */
 
 registros.forEach(r=>{
 
@@ -563,8 +604,6 @@ origin:-1
 
 })
 
-/* ANCHO COLUMNAS */
-
 ws["!cols"]=[
 
 {wch:30},
@@ -573,8 +612,6 @@ ws["!cols"]=[
 {wch:25}
 
 ]
-
-/* TITULOS COMBINADOS */
 
 ws["!merges"]=[
 
@@ -590,20 +627,14 @@ e:{r:2,c:3}
 
 ]
 
-/* LIBRO */
-
 let wb =
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
-
 wb,
 ws,
 "Registro"
-
 )
-
-/* NOMBRE ARCHIVO */
 
 let fecha =
 new Date()
@@ -619,8 +650,6 @@ String(fecha.getMonth()+1)
 String(fecha.getDate())
 .padStart(2,"0")
 }.xlsx`
-
-/* GUARDAR */
 
 XLSX.writeFile(
 wb,
@@ -641,53 +670,9 @@ if(
 return
 }
 
-localStorage.removeItem(
-"registros"
-)
+localStorage.clear()
 
-localStorage.removeItem(
-"usuario"
-)
-
-localStorage.removeItem(
-"cursoGeneral"
-)
-
-localStorage.removeItem(
-"docente"
-)
-
-docente=""
-cursoGeneral=""
-nombre=""
-equipo=""
-
-document.getElementById(
-"docente"
-).value=""
-
-document.getElementById(
-"nombreCompleto"
-).value=""
-
-document.getElementById(
-"cursoActual"
-).innerText=
-"Sin curso seleccionado"
-
-document.getElementById(
-"resultado"
-).innerText=""
-
-document.getElementById(
-"app"
-).style.display="none"
-
-document.getElementById(
-"login"
-).style.display="block"
-
-cargarHistorial()
+location.reload()
 
 }
 
@@ -720,7 +705,6 @@ if(cursoGeneral){
 document.getElementById(
 "cursoActual"
 ).innerText=
-
 "🎓 "+cursoGeneral
 
 }
