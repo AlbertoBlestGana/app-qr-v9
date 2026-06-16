@@ -200,40 +200,32 @@ cargarHistorial()
 
 async function iniciarEscaneo(){
 
-try{
+if(scanning)return
 
-if(scanning){
-
-await detenerEscaneo()
-
-}
-
-}catch(e){}
-
-try{
-
-if(qr){
-
-await qr.clear()
-
-}
-
-}catch(e){}
+document.getElementById(
+"reader"
+).style.display="block"
 
 document.getElementById(
 "estadoCamara"
 ).innerText="📷 Cámara activa"
 
+try{
+
+if(!qr){
+
 qr = new Html5Qrcode("reader")
 
-try{
+}
 
 await qr.start(
 
-{facingMode:"environment"},
+{
+facingMode:"environment"
+},
 
 {
-fps:12,
+fps:10,
 qrbox:{
 width:250,
 height:250
@@ -244,42 +236,21 @@ onScan
 
 )
 
+scanning=true
+
 }catch(error){
 
-const devices =
-await Html5Qrcode.getCameras()
-
-if(!devices.length){
-
-alert("No se encontró cámara")
+console.error(error)
 
 document.getElementById(
 "estadoCamara"
 ).innerText="📷 Cámara cerrada"
 
-return
-
-}
-
-await qr.start(
-
-devices[0].id,
-
-{
-fps:12,
-qrbox:{
-width:250,
-height:250
-}
-},
-
-onScan
-
+alert(
+"No fue posible abrir la cámara"
 )
 
 }
-
-scanning=true
 
 }
 
@@ -287,15 +258,17 @@ async function detenerEscaneo(){
 
 try{
 
-if(qr){
+if(qr && scanning){
 
 await qr.stop()
 
-await qr.clear()
-
 }
 
-}catch(e){}
+}catch(error){
+
+console.error(error)
+
+}
 
 scanning=false
 
