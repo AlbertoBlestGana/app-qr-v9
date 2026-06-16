@@ -18,17 +18,11 @@ href="manifest.json">
 body{
 
 font-family:Arial,sans-serif;
-
 background:#f2f4f7;
-
 margin:0;
-
 padding:20px;
-
 display:flex;
-
 justify-content:center;
-
 min-height:100vh;
 
 }
@@ -36,32 +30,21 @@ min-height:100vh;
 .card{
 
 width:100%;
-
-max-width:500px;
-
+max-width:550px;
 background:white;
-
 border-radius:24px;
-
 padding:25px;
-
 box-shadow:
 0 10px 25px rgba(0,0,0,.08);
-
-text-align:center;
 
 }
 
 .logo{
 
 width:220px;
-
 max-width:90%;
-
 display:block;
-
 margin:auto;
-
 margin-bottom:15px;
 
 }
@@ -69,27 +52,33 @@ margin-bottom:15px;
 h1{
 
 font-size:28px;
+color:#0f6c6d;
+text-align:center;
+margin-bottom:20px;
+
+}
+
+h2{
 
 color:#0f6c6d;
+text-align:center;
 
-margin-bottom:20px;
+}
+
+h3{
+
+color:#444;
 
 }
 
 input{
 
 width:100%;
-
 box-sizing:border-box;
-
 padding:14px;
-
 font-size:16px;
-
 border-radius:12px;
-
 border:1px solid #ccc;
-
 margin-bottom:10px;
 
 }
@@ -97,19 +86,12 @@ margin-bottom:10px;
 button{
 
 width:100%;
-
 padding:14px;
-
 border:none;
-
 border-radius:12px;
-
 font-size:16px;
-
 cursor:pointer;
-
 color:white;
-
 margin-top:8px;
 
 }
@@ -135,59 +117,76 @@ display:none;
 }
 
 #reader{
+
 width:300px;
 margin:auto;
+margin-top:15px;
+
 }
 
 #contador{
 
 font-size:20px;
-
 font-weight:bold;
-
 margin:15px;
+text-align:center;
 
 }
 
 #historial{
 
 max-height:300px;
-
 overflow-y:auto;
-
 border:1px solid #ddd;
-
 border-radius:12px;
-
 padding:10px;
-
 background:#fafafa;
-
 margin-top:15px;
+
+}
+
+#estadoCamara{
+
+font-size:14px;
+color:#666;
+text-align:center;
+margin-top:10px;
+
+}
+
+#cursoActual{
+
+font-weight:bold;
+color:#198754;
+text-align:center;
 
 }
 
 .firma{
 
 margin-top:25px;
-
 padding-top:15px;
-
 border-top:1px solid #ddd;
-
 font-size:13px;
-
 color:#666;
+text-align:center;
 
 }
 
 .firma strong{
 
 display:block;
-
 color:#0f6c6d;
-
 margin-bottom:5px;
+
+}
+
+hr{
+
+margin-top:20px;
+margin-bottom:20px;
+border:none;
+border-top:1px solid #ddd;
 
 }
 
@@ -208,7 +207,6 @@ class="logo">
 REGISTRO DE USO DE EQUIPOS
 
 </h1>
-
 <div id="login">
 
 <h3>Profesor a cargo</h3>
@@ -234,7 +232,6 @@ Sin curso seleccionado
 </p>
 
 <button
-id="btnCurso"
 class="btn-verde"
 onclick="escanearCurso()">
 
@@ -269,11 +266,9 @@ Escaneados: 0
 
 </div>
 
-<div style="display:flex;flex-direction:column;gap:8px;">
-
 <button
 class="btn-verde"
-onclick="iniciarEscaneo()">
+onclick="escanearEquipo()">
 
 📦 Escanear equipo
 
@@ -311,9 +306,11 @@ onclick="nuevaPlanilla()">
 
 </button>
 
-</div>
+<p id="estadoCamara">
 
-<br>
+📷 Cámara cerrada
+
+</p>
 
 <div id="reader"></div>
 
@@ -322,20 +319,23 @@ onclick="nuevaPlanilla()">
 <h2>Historial</h2>
 
 <div id="historial"></div>
-
 <div class="firma">
 
 <strong>
+
 Sistema de Registro QR
+
 </strong>
 
 <div>
+
 Colegio Alberto Blest Gana
+
 </div>
 
 <div>
+
 © 2026 Bastian Sepúlveda
-</div>
 
 </div>
 
