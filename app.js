@@ -501,7 +501,7 @@ cargarHistorial()
 
 function exportarExcel(){
 
-let registros=
+let registros =
 
 JSON.parse(
 localStorage.getItem("registros")
@@ -509,62 +509,90 @@ localStorage.getItem("registros")
 
 if(!registros.length){
 
-alert(
-"No hay registros"
-)
+alert("No hay registros")
 
 return
 
 }
 
-let datos=[]
+/* ENCABEZADO */
 
-datos.push({
+let ws = XLSX.utils.aoa_to_sheet([
 
-Nombre:"Profesor a cargo",
-Equipo:docente,
-Curso:"",
-Fecha:""
+["COLEGIO ALBERTO BLEST GANA"],
 
-})
+[],
 
-datos.push({
+["REGISTRO DE USO DE EQUIPOS"],
 
-Nombre:"",
-Equipo:"",
-Curso:"",
-Fecha:""
+[],
 
-})
+["Profesor a cargo", docente],
+
+["Curso", cursoGeneral],
+
+["Fecha de exportación",
+new Date().toLocaleString()],
+
+[],
+
+["Nombre","Equipo","Curso","Fecha"]
+
+])
+
+/* REGISTROS */
 
 registros.forEach(r=>{
 
-datos.push({
+XLSX.utils.sheet_add_aoa(
 
-Nombre:r.nombre,
-Equipo:r.equipo,
-Curso:r.curso,
-Fecha:r.fecha
+ws,
 
-})
+[[
+r.nombre,
+r.equipo,
+r.curso,
+r.fecha
+]],
 
-})
+{
+origin:-1
+}
 
-let ws=
-XLSX.utils.json_to_sheet(
-datos
 )
+
+})
+
+/* ANCHO COLUMNAS */
 
 ws["!cols"]=[
 
 {wch:30},
-{wch:25},
+{wch:20},
 {wch:20},
 {wch:25}
 
 ]
 
-let wb=
+/* TITULOS COMBINADOS */
+
+ws["!merges"]=[
+
+{
+s:{r:0,c:0},
+e:{r:0,c:3}
+},
+
+{
+s:{r:2,c:0},
+e:{r:2,c:3}
+}
+
+]
+
+/* LIBRO */
+
+let wb =
 XLSX.utils.book_new()
 
 XLSX.utils.book_append_sheet(
@@ -575,10 +603,12 @@ ws,
 
 )
 
-let fecha=
+/* NOMBRE ARCHIVO */
+
+let fecha =
 new Date()
 
-let archivo=
+let archivo =
 
 `Registro_${
 fecha.getFullYear()
@@ -589,6 +619,8 @@ String(fecha.getMonth()+1)
 String(fecha.getDate())
 .padStart(2,"0")
 }.xlsx`
+
+/* GUARDAR */
 
 XLSX.writeFile(
 wb,
