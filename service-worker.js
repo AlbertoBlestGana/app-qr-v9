@@ -1,4 +1,4 @@
-const CACHE="qr-registro-v12"
+const CACHE="qr-registro-v13"
 
 const ASSETS=[
 
@@ -15,9 +15,7 @@ const ASSETS=[
 self.addEventListener("install",e=>{
 
 e.waitUntil(
-caches.open(CACHE).then(cache=>{
-return cache.addAll(ASSETS)
-})
+caches.open(CACHE).then(cache=>cache.addAll(ASSETS))
 )
 
 self.skipWaiting()
@@ -27,27 +25,46 @@ self.skipWaiting()
 self.addEventListener("activate",e=>{
 
 e.waitUntil(
-caches.keys().then(keys=>{
-return Promise.all(
-keys.map(key=>{
-if(key!==CACHE){
-return caches.delete(key)
-}
-})
+caches.keys().then(keys=>
+Promise.all(
+keys
+.filter(key=>key!==CACHE)
+.map(key=>caches.delete(key))
 )
-})
+)
+.then(()=>self.clients.claim())
 )
 
-self.clients.claim()
-
 })
+
+/*
+Primero red, después caché:
+- Con internet siempre se carga la versión más nueva.
+- Sin internet se usa la copia guardada (incluidas las librerías QR y Excel).
+*/
 
 self.addEventListener("fetch",e=>{
 
+if(e.request.method!=="GET")return
+
 e.respondWith(
-caches.match(e.request).then(res=>{
-return res || fetch(e.request)
+
+fetch(e.request)
+.then(res=>{
+
+if(res && (res.ok || res.type==="opaque")){
+
+const copia=res.clone()
+
+caches.open(CACHE).then(cache=>cache.put(e.request,copia))
+
+}
+
+return res
+
 })
+.catch(()=>caches.match(e.request))
+
 )
 
 })
