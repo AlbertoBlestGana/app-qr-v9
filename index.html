@@ -115,7 +115,14 @@ background:#dc3545;
 #app{
 display:none;
 }
-<style>
+
+#zonaEscaneo{
+display:none;
+}
+
+#panelHistorial{
+display:none;
+}
 
 #reader{
 
@@ -321,6 +328,10 @@ onclick="nuevaPlanilla()">
 
 </button>
 
+</div>
+
+<div id="zonaEscaneo">
+
 <p id="estadoCamara">
 
 📷 Cámara cerrada
@@ -341,11 +352,26 @@ Apunte la cámara al código QR
 
 </p>
 
+<button
+class="btn-rojo"
+onclick="detenerEscaneo()">
+
+✖ Cerrar cámara
+
+</button>
+
+</div>
+
 <p id="resultado"></p>
+
+<div id="panelHistorial">
 
 <h2>Historial</h2>
 
 <div id="historial"></div>
+
+</div>
+
 <div class="firma">
 
 <strong>
@@ -372,7 +398,7 @@ Colegio Alberto Blest Gana
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script src="app.js"></script>
 
